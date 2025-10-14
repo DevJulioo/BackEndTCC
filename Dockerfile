@@ -1,24 +1,40 @@
-# 1. Use uma imagem base oficial com Java 17
-FROM eclipse-temurin:17-jdk-jammy
+# ==================================
+# ESTÁGIO 1: Build da Aplicação
+# ==================================
+# Usamos uma imagem oficial do Maven com Java 17 para compilar o projeto.
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
-# 2. Argumento para o nome do arquivo JAR (ajuste se for diferente)
-ARG JAR_FILE=target/login-auth-api-0.0.1-SNAPSHOT.jar
+# Define o diretório de trabalho dentro do contêiner.
+WORKDIR /app
 
-# 3. Crie um diretório de trabalho
-WORKDIR /opt/app
+# Copia apenas o pom.xml primeiro para aproveitar o cache do Docker.
+# Se as dependências não mudarem, o Docker não vai baixá-las de novo.
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# 4. Copie os arquivos de build do Maven
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-
-# 5. Copie o código-fonte do projeto
+# Copia o resto do código-fonte.
 COPY src ./src
 
-# 6. Execute o build do Maven (pulando testes para acelerar)
-RUN ./mvnw clean install -DskipTests
+# Compila o projeto e cria o arquivo .jar, pulando os testes.
+RUN mvn clean package -DskipTests
 
-# 7. Copie o JAR construído para a raiz do diretório
-COPY ${JAR_FILE} app.jar
 
-# 8. Comando para iniciar a aplicação
-ENTRYPOINT ["java","-jar","app.jar"]
+# ==================================
+# ESTÁGIO 2: Runtime da Aplicação
+# ==================================
+# Usamos uma imagem JRE (Java Runtime Environment) super leve.
+# Ela só tem o necessário para rodar Java, não para compilar.
+FROM eclipse-temurin:17-jre-jammy
+
+# Define o diretório de trabalho.
+WORKDIR /app
+
+# Copia o arquivo .jar que foi criado no Estágio 1 (builder).
+# !!! ATENÇÃO: Verifique se o nome 'login-auth-api-0.0.1-SNAPSHOT.jar' está correto !!!
+COPY --from=builder /app/target/login-auth-api-0.0.1-SNAPSHOT.jar app.jar
+
+# Expõe a porta 8080 (a porta padrão do Tomcat).
+EXPOSE 8080
+
+# Comando final para iniciar a aplicação.
+ENTRYPOINT ["java", "-jar", "app.jar"]
