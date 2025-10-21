@@ -191,5 +191,72 @@ A Documentação é gerada automaticamente pela biblioteca `springdoc-openapi` c
 ## <a id="-estrutura-de-pastas"></a> 📁 Estrutura de Pastas
 
 A estrutura de pastas principal do projeto segue as convenções do Spring Boot:
+````
+seu-repositorio-backend/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/projeto/tcc/
+│   │   │       ├── controllers/    # Camada de controle REST (recebe requisições HTTP)
+│   │   │       ├── services/       # Lógica de negócio e regras
+│   │   │       ├── repositories/   # Interfaces Spring Data JPA (acesso ao DB)
+│   │   │       ├── models/         # Entidades JPA (@Entity)
+│   │   │       ├── dto/            # Data Transfer Objects (para requisições e respostas)
+│   │   │       ├── security/       # Configuração do Spring Security, TokenService, SecurityFilter
+│   │   │       ├── config/         # Outras configurações (ex: CORS, Swagger)
+│   │   │       ├── exceptions/     # Classes de exceção customizadas
+│   │   │       └── TccApplication.java # Classe principal da aplicação
+│   │   └── resources/
+│   │       ├── static/         # Arquivos estáticos (CSS, JS, Imagens - se houver)
+│   │       ├── templates/      # Templates HTML (se usar Thymeleaf, etc.)
+│   │       └── application.properties # Arquivo de configuração principal
+│   └── test/
+│       └── java/
+│           └── com/projeto/tcc/ # Testes unitários e de integração
+├── .gitignore          # Arquivos ignorados pelo Git
+├── mvnw                # Maven Wrapper (executável)
+├── mvnw.cmd            # Maven Wrapper (Windows)
+├── pom.xml             # Arquivo de configuração do Maven (dependências, build)
+└── README.md           # Este arquivo :)
+
+`````
+
+---
+
+## <a id="testes"></a> 🧪 Testes
+
+Para rodar os testes automatizados (Junit), use o comando Maven
+```bash
+mvn maven
+````
+
+---
+
+## <a id="deploy"></a> ☁️ Deploy
+
+* **Instruções Gerais**
+Geralmente envolve gerar o JAR ````mvn clean package```` ou fazer um upload em uma plataforma de CI/CD para automatizar o build ou deploy
+
+* **Configuração de produção**
+Lembre - se de usar um perfil ```` aplication-properties ```` ou variáveis de ambiente na plataforma de deploy para configurar o banco de dados de produção e a chave secreta JWT de forma segura. Defina ``` spring.jpa.hibernate.ddl-auto=validate ``` ou ``` none ``` em produção.
+
+## <a id="-como-contribuir"></a> 🤝 Como Contribuir
+
+* **Este é um projeto de TCC, mas se houver interesse em contribuir:**
+
+1.  *Faça um Fork do projeto.*
+
+2.  *Crie uma nova branch ` (git checkout -b feature/sua-feature) `*
+
+3.  *Faça commit das suas alterações* ` (git commit -m 'Adiciona nova feature X') `
+
+4.  *Faça push para a sua branch* ` (git push origin feature/sua-feature) `
+
+5.  Abra um **Pull Request**
+
+## <a id="-agradecimentos--autores"></a> 🙏 Agradecimentos / Autores
+
+* **[Júlio Cesar de Souza Moura / EducaSenai]** - Desenvolvedor(es) - [[Link para GitHub/Contato]](https://github.com/DevJulioo)
+* Agradecimentos ao **[Fiama e Átila]**, **[SENAI]** pela oportunidade e suporte.
 
 
